@@ -1,0 +1,8 @@
+streamlit
+matplotlib
+python>=3.8
+numpy
+pandas
+nltk
+beautifulsoup4
+scikit_learn
