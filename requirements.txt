@@ -1,6 +1,6 @@
 streamlit
 matplotlib
-python
+python>=3.7
 numpy
 pandas
 nltk
