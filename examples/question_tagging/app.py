@@ -114,7 +114,7 @@ def stem_text(text, token, stemmer):
 
 
 def load_model():
-    with open(path+'modelizing_tools.pkl', 'rb') as file:
+    with open(path+'model.pkl', 'rb') as file:
         model, multilabel_binarizer, tfidfX = pickle.load(file)
     with open(path+'contractions.pkl', 'rb') as file:
         contractions = pickle.load(file)
