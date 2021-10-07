@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 def main():
-    st.markdown((Path(__file__).parents[2]/"README.md").read_text())
+    st.write('# Différents exemples de Machine Learning')
 
 
 if __name__ == "__main__":
