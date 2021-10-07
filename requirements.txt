@@ -8,6 +8,4 @@ beautifulsoup4
 scikit-learn
 tensorflow
 keras
-pip
-opencv
-pickle5
+opencv-python-headless
