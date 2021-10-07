@@ -13,7 +13,7 @@ def main():
 
 if __name__ == "__main__":
     st.set_page_config(
-        page_title='TEST',  # String or None. Strings get appended with "• Streamlit". 
+        page_title='MLE',  # String or None. Strings get appended with "• Streamlit". 
         initial_sidebar_state="auto",  # Can be "auto", "expanded", "collapsed"
         page_icon=None,   # String, anything supported by st.image, or None.
         layout="wide"  # Can be "centered" or "wide". In the future also "dashboard", etc.

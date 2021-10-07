@@ -9,9 +9,9 @@ from bs4 import BeautifulSoup
 from numpy import ceil, array
 from sklearn.base import RegressorMixin
 from pandas import read_pickle
+import matplotlib.pyplot as plt
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger')
-read_and_cache_pickle = st.cache(read_pickle)
 path = "examples/question_tagging/"
 
 
@@ -151,7 +151,7 @@ def model():
     # Visuel
     st.write("# Labélisation de question")
     title_input = st.text_input("Titre : ", value='Programming')
-    question_input = st.text_area("Question : ", value='Python')
+    question_input = st.text_area("Question : ", value='Python', height=300)
     
     # Outils
     model, multilabel_binarizer, tfidfX, contractions = load_model()    
@@ -184,7 +184,8 @@ def model():
 # @st.cache
 def results():
     # Import et constantes
-    df = read_and_cache_pickle(path+'results.pkl')
+    df = read_pickle(path+'results.pkl')
+    df.drop(columns=['Hamming L', 'Speed'], inplace=True)
     all_models = sorted(set(df.index.get_level_values(0).values))
     all_metrics = sorted(df.columns) 
 
@@ -202,8 +203,11 @@ def results():
     # Visualisation
     st.write(f'# Résultats des différents modèles pour le jeu {train_test}')
     st.write((df.loc[models, jeu, :].droplevel(1).loc[:, metrics].sort_index() *100).astype(int).style.background_gradient())
-    st.line_chart(df.loc[(models, jeu),  metrics].droplevel(level=1, axis=0))
-
+    # axes = df.loc[(models, jeu),  metrics].droplevel(level=1, axis=0).plot.bar(figsize=(8,15), subplots=True)
+    # for ax in axes:
+    #     st.pyplot(ax.figure)
+    st.pyplot(df.loc[(models, jeu),  metrics].droplevel(level=1, axis=0).plot.bar().figure)
+    
     with st.container():
         col1, col2 = st.columns([1,7])
         desired_model = col1.selectbox('Modèle :', all_models, index=3)
@@ -216,5 +220,11 @@ def main():
     elif menu == 'Résultats': results()
     
 if __name__ == '__main__':
+    plt.style.use('dark_background')
+    plt.rcParams.update({
+        "figure.facecolor":  (0.0, 0.0, 0.0, 0.), 
+        "axes.facecolor":    (0.0, 0.0, 0.0, 0.), 
+        "savefig.facecolor": (0.0, 0.0, 0.0, 0.)})
+    text_color = "w"
     path = './'
     main()
