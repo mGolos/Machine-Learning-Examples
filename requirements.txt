@@ -7,4 +7,4 @@ beautifulsoup4
 scikit-learn
 tensorflow
 keras
-opencv-python
+opencv-python-headless
