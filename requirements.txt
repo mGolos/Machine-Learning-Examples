@@ -5,4 +5,4 @@ pandas
 nltk
 beautifulsoup4
 scikit-learn
-cv2
+opencv-python
