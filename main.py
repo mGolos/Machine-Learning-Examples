@@ -20,4 +20,7 @@ if __name__ == "__main__":
         layout="centered"  # Can be "centered" or "wide". In the future also "dashboard", etc.
     )
     st.sidebar.image('hands.png')
+    with open('.streamlit/style.css') as f:
+        # st.components.v1.html(f'<style>{f.read()}</style>')
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
     main()
