@@ -79,7 +79,7 @@ def model():
 
 def results():
     st.title("Résultats")
-    tmp = pd.read_pickle(path+'results.pkl')
+    tmp = pd.read_csv('results.csv', index_col=0)
     breed_results, avgs = tmp.iloc[:-3], tmp.iloc[-2:]
     avgs.index.name= 'Moyennes'
     avgs.index = ['Moyennes macro', 'Moyennes pondérées']
