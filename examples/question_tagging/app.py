@@ -183,6 +183,12 @@ def model():
 
 # @st.cache
 def results():
+    plt.style.use('dark_background')
+    plt.rcParams.update({
+        "figure.facecolor":  (0.0, 0.0, 0.0, 0.), 
+        "axes.facecolor":    (0.0, 0.0, 0.0, 0.), 
+        "savefig.facecolor": (0.0, 0.0, 0.0, 0.)})
+    
     # Import et constantes
     df = read_pickle(path+'results.pkl')
     df.drop(columns=['Hamming L', 'Speed'], inplace=True)
@@ -220,11 +226,5 @@ def main():
     elif menu == 'Résultats': results()
     
 if __name__ == '__main__':
-    plt.style.use('dark_background')
-    plt.rcParams.update({
-        "figure.facecolor":  (0.0, 0.0, 0.0, 0.), 
-        "axes.facecolor":    (0.0, 0.0, 0.0, 0.), 
-        "savefig.facecolor": (0.0, 0.0, 0.0, 0.)})
-    text_color = "w"
     path = './'
     main()
