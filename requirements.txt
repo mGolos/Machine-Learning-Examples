@@ -1,6 +1,6 @@
+python==3.8
 streamlit
 matplotlib
-python>=3.7
 numpy
 pandas
 nltk
