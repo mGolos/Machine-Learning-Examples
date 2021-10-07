@@ -1,4 +1,3 @@
-name: deep-learning
 channels:
   - defaults
   - conda-forge
@@ -6,29 +5,18 @@ dependencies:
   # Core
   - python>=3.8
   - pip>=21
-  - nb_conda
   # Data Science
-  - jupyter>=1
-  - matplotlib>=3.4.2
-  - seaborn>=0.11.2
-  - pydot
+  - matplotlib
   # Learning
-  - intel::scikit-learn>=0.24.2
-  - keras-tuner>=1.0.3
+  - scikit-learn
   - nltk
   - bs4
   - pip:
     # Learning
-    - keras>=2.6
-    - tensorflow-gpu>=2.6
+    - keras
+    - tensorflow
+    - tensorflow-gpu
     # Visual
-    - jupyter_contrib_nbextensions
     - streamlit
-    - gradio
     # Dependencies
-    - h5py==2.10
     - opencv-python
-    - environment_kernels
-    - keras-nightly>=2.7
-    - tf-nightly>=2.8
-    - gensim
