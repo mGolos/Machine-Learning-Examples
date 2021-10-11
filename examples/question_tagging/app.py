@@ -121,7 +121,7 @@ def load_model():
     return model, multilabel_binarizer, tfidfX, contractions
 
     
-def grid_checkbox(values, nrow=None, ncol=None, title=None):
+def grid_checkbox(values, nrow=None, ncol=None, title=None, defaults=None):
     N = len(values)
     
     if nrow == None:
@@ -142,7 +142,10 @@ def grid_checkbox(values, nrow=None, ncol=None, title=None):
     for row in range(nrow):
         for col in range(ncol):
             if i < N:
-                checkboxes.append(grid[row][col].checkbox(values[i], key=values[i], value=True))
+                if defaults is None:
+                    checkboxes.append(grid[row][col].checkbox(values[i], key=values[i], value=True))
+                else:
+                    checkboxes.append(grid[row][col].checkbox(values[i], key=values[i], value=defaults[i]))
             i += 1
     return checkboxes
 
@@ -196,28 +199,29 @@ def results():
     all_metrics = sorted(df.columns) 
 
     # Sidebar
-    checkboxes1 = grid_checkbox(all_models, ncol=2, title='Modèles :')
+    checkboxes1 = grid_checkbox(all_models, ncol=2, title='Modèles :', defaults=6*[True]+5*[False])
     models = array(all_models)[checkboxes1]
-    # models = st.sidebar.multiselect("Sélection de modèles :", all_models, all_models)
-    checkboxes2 = grid_checkbox(all_metrics, ncol=2, title='Métriques :')
+    checkboxes2 = grid_checkbox(all_metrics, ncol=2, title='Métriques :', defaults=4*[True]+2*[False])
     metrics = array(all_metrics)[checkboxes2]
-    # metrics = st.sidebar.multiselect("Sélection de métriques :", all_metrics, all_metrics)
     train_test = st.sidebar.radio('Jeu :', ['de Test','d\'Entrainement'])
     jeu = 'Test' if train_test == 'de Test' else'Train'
-    st.sidebar.caption('Made by Woodian')
 
     # Visualisation
     st.write(f'# Résultats des différents modèles pour le jeu {train_test}')
-    st.write((df.loc[models, jeu, :].droplevel(1).loc[:, metrics].sort_index() *100).astype(int).style.background_gradient())
-    # axes = df.loc[(models, jeu),  metrics].droplevel(level=1, axis=0).plot.bar(figsize=(8,15), subplots=True)
-    # for ax in axes:
-    #     st.pyplot(ax.figure)
+    with st.expander("Explications"):
+        st.write("""
+            Les différents modèles sont créés et nommés par les abréviations suivantes :  
+            `WE`(Word Embedding), `BR` (Binary Relevance), `CC` (Classifier Chain), `LP` (Label Powerset), `MOC` (Multi Output Classification),
+            `GNB` (Gaussian Naive Bayes), `SVC` (Support Vector Classification), `KNC` (K Neighbours Classifier), `MLkNN` (MultiLabel k Nearest Neighbours).
+            `Simple` étant un modèle simple personnement créé.
+        """)
+    st.table((df.loc[models, jeu, :].droplevel(1).loc[:, metrics].sort_index() *100).astype(int).style.background_gradient())
     st.pyplot(df.loc[(models, jeu),  metrics].droplevel(level=1, axis=0).plot.bar().figure)
     
     with st.container():
-        col1, col2 = st.columns([1,7])
+        col1, col2 = st.columns([1,5])
         desired_model = col1.selectbox('Modèle :', all_models, index=3)
-        col2.write(df.loc[desired_model].loc[:, metrics].style.background_gradient(axis=1))
+        col2.table(df.loc[desired_model].loc[:, metrics].style.background_gradient(axis=1))
     
 
 def main():
