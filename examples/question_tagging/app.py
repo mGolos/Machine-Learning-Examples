@@ -154,7 +154,6 @@ def grid_checkbox(values, nrow=None, ncol=None, title=None, defaults=None):
     return checkboxes
 
 
-@st.cache   
 def postprocessing(contractions, tfidfX):
     # Visuel
     st.write("# Labélisation de question")
