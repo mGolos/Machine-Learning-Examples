@@ -182,7 +182,7 @@ def model():
 
     # Tranformation / Prediction
     X = tfidfX.transform(np.array([x]))
-    y = model.predict(X)
+    y = model.predict(X.astype(np.float32))
     if threshold is not None:
         y = y > threshold
     output = tfidfY.inverse_transform(y)[0]
