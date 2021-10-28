@@ -187,7 +187,7 @@ def model():
     model, tfidfX, tfidfY, contractions = load_model() 
     X = postprocessing(contractions, tfidfX)
     y = model.predict(X.astype(np.float32))
-    threshold = st.slider('Threshold: ', 0.05, 0.5, 0.25)
+    threshold = st.slider('Seuil :', 0.025, 0.25, 0.25)
     output = tfidfY.inverse_transform(y > threshold)[0]
 
     # Visuel
