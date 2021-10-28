@@ -113,17 +113,17 @@ def stem_text(text, token, stemmer):
     return " ".join(stem_text) # Return the text untokenize
 
 
-def load_model(threshold=None):
+@st.cache
+def load_model():
     from pecos.xmc.xlinear.model import XLinearModel
     model = XLinearModel.load(path+"XR-Linear", is_predict_only=False)
-    threshold=0.25
     
     with open(path+'tfidfs.pkl', 'rb') as file:
         tfidfX, tfidfY = pickle.load(file)
     with open(path+'contractions.pkl', 'rb') as file:
         contractions = pickle.load(file)
         
-    return model, tfidfX, tfidfY, contractions, threshold
+    return model, tfidfX, tfidfY, contractions
 
     
 def grid_checkbox(values, nrow=None, ncol=None, title=None, defaults=None):
@@ -154,15 +154,15 @@ def grid_checkbox(values, nrow=None, ncol=None, title=None, defaults=None):
             i += 1
     return checkboxes
 
-     
-def model():
+
+@st.cache   
+def postprocessing(contractions, tfidfX):
     # Visuel
     st.write("# Labélisation de question")
     title_input = st.text_input("Titre : ", value='Programming')
     question_input = st.text_area("Question : ", value='Python', height=300)
     
-    # Outils
-    model, tfidfX, tfidfY, contractions, threshold = load_model()    
+    # Outils  
     contractions_re = re.compile('(%s)' % '|'.join(contractions.keys()))
     stop_words = set(nltk.corpus.stopwords.words("english"))
     adjective_tag_list = set(['JJ','JJR', 'JJS', 'RBR', 'RBS'])
@@ -182,16 +182,20 @@ def model():
 
     # Tranformation / Prediction
     X = tfidfX.transform(np.array([x]))
+    return X
+    
+    
+def model():
+    model, tfidfX, tfidfY, contractions = load_model() 
+    X = postprocessing(contractions, tfidfX)
     y = model.predict(X.astype(np.float32))
-    if threshold is not None:
-        y = y > threshold
-    output = tfidfY.inverse_transform(y)[0]
+    threshold = st.slider('Threshold: ', 0.05, 0.5, 0.25)
+    output = tfidfY.inverse_transform(y > threshold)[0]
 
     # Visuel
     st.multiselect("Tags : ", tfidfY.get_feature_names(), output)
 
 
-# @st.cache
 def results():
     plt.style.use('dark_background')
     plt.rcParams.update({
