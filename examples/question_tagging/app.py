@@ -115,7 +115,7 @@ def stem_text(text, token, stemmer):
 
 def load_model(threshold=None):
     from pecos.xmc.xlinear.model import XLinearModel
-    model = XLinearModel.load("XR-Linear", is_predict_only=False)
+    model = XLinearModel.load(path+"XR-Linear", is_predict_only=False)
     threshold=0.25
     
     with open(path+'tfidfs.pkl', 'rb') as file:
