@@ -113,7 +113,6 @@ def stem_text(text, token, stemmer):
     return " ".join(stem_text) # Return the text untokenize
 
 
-@st.cache
 def load_model():
     from pecos.xmc.xlinear.model import XLinearModel
     model = XLinearModel.load(path+"XR-Linear", is_predict_only=False)
