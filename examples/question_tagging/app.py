@@ -8,7 +8,7 @@ import re
 from bs4 import BeautifulSoup
 from numpy import ceil, array
 from sklearn.base import RegressorMixin
-from pandas import read_pickle
+from pandas import read_csv
 import matplotlib.pyplot as plt
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger')
@@ -200,15 +200,14 @@ def results():
         "savefig.facecolor": (0.0, 0.0, 0.0, 0.)})
     
     # Import et constantes
-    df = read_pickle(path+'results.pkl')
-    df.drop(columns=['Hamming L'], inplace=True)
+    df = read_csv(path+'results.csv').set_index(['Model','Set'])
     all_models = sorted(set(df.index.get_level_values(0).values))
     all_metrics = sorted(df.columns) 
 
     # Sidebar
-    checkboxes1 = grid_checkbox(all_models, ncol=2, title='Modèles :', defaults=6*[True]+5*[False]+[True])
+    checkboxes1 = grid_checkbox(all_models, ncol=2, title='Modèles :', defaults=6*[True])
     models = array(all_models)[checkboxes1]
-    checkboxes2 = grid_checkbox(all_metrics, ncol=2, title='Métriques :', defaults=4*[True]+3*[False])
+    checkboxes2 = grid_checkbox(all_metrics, ncol=2, title='Métriques :', defaults=5*[True]+3*[False])
     metrics = array(all_metrics)[checkboxes2]
     train_test = st.sidebar.radio('Jeu :', ['de Test','d\'Entrainement'])
     jeu = 'Test' if train_test == 'de Test' else'Train'
