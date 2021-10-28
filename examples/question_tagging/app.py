@@ -113,12 +113,17 @@ def stem_text(text, token, stemmer):
     return " ".join(stem_text) # Return the text untokenize
 
 
-def load_model():
-    with open(path+'model.pkl', 'rb') as file:
-        model, multilabel_binarizer, tfidfX = pickle.load(file)
+def load_model(threshold=None):
+    from pecos.xmc.xlinear.model import XLinearModel
+    model = XLinearModel.load("XR-Linear", is_predict_only=False)
+    threshold=0.25
+    
+    with open(path+'tfidfs.pkl', 'rb') as file:
+        tfidfX, tfidfY = pickle.load(file)
     with open(path+'contractions.pkl', 'rb') as file:
         contractions = pickle.load(file)
-    return model, multilabel_binarizer, tfidfX, contractions
+        
+    return model, tfidfX, tfidfY, contractions, threshold
 
     
 def grid_checkbox(values, nrow=None, ncol=None, title=None, defaults=None):
@@ -157,7 +162,7 @@ def model():
     question_input = st.text_area("Question : ", value='Python', height=300)
     
     # Outils
-    model, multilabel_binarizer, tfidfX, contractions = load_model()    
+    model, tfidfX, tfidfY, contractions, threshold = load_model()    
     contractions_re = re.compile('(%s)' % '|'.join(contractions.keys()))
     stop_words = set(nltk.corpus.stopwords.words("english"))
     adjective_tag_list = set(['JJ','JJR', 'JJS', 'RBR', 'RBS'])
@@ -178,10 +183,12 @@ def model():
     # Tranformation / Prediction
     X = tfidfX.transform(np.array([x]))
     y = model.predict(X)
-    output = multilabel_binarizer.inverse_transform(y)[0]
+    if threshold is not None:
+        y = y > threshold
+    output = tfidfY.inverse_transform(y)[0]
 
     # Visuel
-    st.multiselect("Tags : ", multilabel_binarizer.classes_, output)
+    st.multiselect("Tags : ", tfidfY.get_feature_names(), output)
 
 
 # @st.cache
@@ -194,17 +201,18 @@ def results():
     
     # Import et constantes
     df = read_pickle(path+'results.pkl')
-    df.drop(columns=['Hamming L', 'Speed'], inplace=True)
+    df.drop(columns=['Hamming L'], inplace=True)
     all_models = sorted(set(df.index.get_level_values(0).values))
     all_metrics = sorted(df.columns) 
 
     # Sidebar
-    checkboxes1 = grid_checkbox(all_models, ncol=2, title='Modèles :', defaults=6*[True]+5*[False])
+    checkboxes1 = grid_checkbox(all_models, ncol=2, title='Modèles :', defaults=6*[True]+5*[False]+[True])
     models = array(all_models)[checkboxes1]
-    checkboxes2 = grid_checkbox(all_metrics, ncol=2, title='Métriques :', defaults=4*[True]+2*[False])
+    checkboxes2 = grid_checkbox(all_metrics, ncol=2, title='Métriques :', defaults=4*[True]+3*[False])
     metrics = array(all_metrics)[checkboxes2]
     train_test = st.sidebar.radio('Jeu :', ['de Test','d\'Entrainement'])
     jeu = 'Test' if train_test == 'de Test' else'Train'
+    df
 
     # Visualisation
     st.write(f'# Résultats des différents modèles pour le jeu {train_test}')

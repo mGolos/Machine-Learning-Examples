@@ -1,0 +1,10 @@
+{
+ "__meta__": {
+  "class_fullname": "pecos.xmc.base###HierarchicalMLModel"
+ },
+ "model": "HierarchicalMLModel",
+ "depth": 2,
+ "nr_features": 8564,
+ "nr_codes": 16,
+ "nr_labels": 1395
+}

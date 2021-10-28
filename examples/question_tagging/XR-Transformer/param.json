@@ -1,0 +1,8 @@
+{
+ "__meta__": {
+  "class_fullname": "pecos.xmc.xtransformer.model###XTransformer"
+ },
+ "model": "XTransformer",
+ "depth": 2,
+ "nr_labels": 1395
+}

@@ -1,0 +1,17 @@
+{
+ "__meta__": {
+  "class_fullname": "pecos.xmc.base###MLModel"
+ },
+ "model": "MLModel",
+ "nr_labels": 1395,
+ "nr_features": 8556,
+ "nr_codes": 1,
+ "bias": 1.0,
+ "pred_kwargs": {
+  "__meta__": {
+   "class_fullname": "pecos.xmc.base###MLModel.PredParams"
+  },
+  "only_topk": 20,
+  "post_processor": "l3-hinge"
+ }
+}
