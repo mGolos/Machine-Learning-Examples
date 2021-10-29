@@ -115,7 +115,7 @@ def stem_text(text, token, stemmer):
 
 def load_model():
     from pecos.xmc.xlinear.model import XLinearModel
-    model = XLinearModel.load(path+"XR-Linear", is_predict_only=False)
+    model = XLinearModel.load(path+"XR-Transformer", is_predict_only=False)
     
     with open(path+'tfidfs.pkl', 'rb') as file:
         tfidfX, tfidfY = pickle.load(file)
