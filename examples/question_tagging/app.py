@@ -278,7 +278,7 @@ def results():
         """)
     st.table((df.loc[models, jeu, :].droplevel(1).loc[:, metrics].sort_index() *100).astype(int).style.background_gradient())
     st.pyplot(df.loc[(models, jeu),  metrics].droplevel(level=1, axis=0).plot.bar().figure)
-    st.pyplot(MODEL_WEIGHTS.plot.bar().figure)
+    st.pyplot(MODEL_WEIGHTS.loc[models].plot.bar().figure)
     
     with st.container():
         col1, col2 = st.columns([1,5])
