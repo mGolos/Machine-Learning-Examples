@@ -40,7 +40,7 @@ without them stopping the execution of the code?
 Any help would be much appreciated.
 P.S. Happy new year!!'''
 MODEL_WEIGHTS = DataFrame.from_dict(
-    {'Simple': 120, 'BR/GNB': 288, 'LP/SVC': 1500, 'CC/DTC': 2, 'XR-Lin.': 7, 'XR-Tran.': 6}, 
+    {'Simple': 120, 'BR/GNB': 288, 'LP/SVC': 1500, 'CC/DTC': 2, 'XR-Lin.': 7, 'XR-Tra.': 6}, 
     orient='index', 
     columns=['Weight'])
 
