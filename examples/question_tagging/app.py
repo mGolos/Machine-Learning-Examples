@@ -16,7 +16,7 @@ path = "examples/question_tagging/"
 
 
 class SimpleModel(RegressorMixin):
-    def __init__(self, threshold=0.5):
+    def __init__(self, threshold=None):
         self.threshold = threshold
         
     def fit(self, X, Y):
@@ -30,9 +30,12 @@ class SimpleModel(RegressorMixin):
             continuous = X.dot(self.A_)
         else:
             continuous = X * self.A_
-            
-        normalized = (continuous.T / continuous.max(1)).T
-        return normalized > self.threshold
+           
+        if self.threshold is None:
+            return continuous
+        else:
+            normalized = (continuous.T / continuous.max(1).toarray().T).T
+            return normalized > self.threshold
 
 
 @st.cache
@@ -113,9 +116,19 @@ def stem_text(text, token, stemmer):
     return " ".join(stem_text) # Return the text untokenize
 
 
-def load_model():
-    from pecos.xmc.xlinear.model import XLinearModel
-    model = XLinearModel.load(path+"XR-Transformer", is_predict_only=False)
+@st.cache(allow_output_mutation=True)
+def load_model(model):
+    if model == 'Simple':
+        with open(path+'model_simple.pkl', 'rb') as file:
+            model = pickle.load(file)
+            
+    elif model == 'XR-Linear':
+        from pecos.xmc.xlinear.model import XLinearModel
+        model = XLinearModel.load(path+"XR-Linear", is_predict_only=False)
+        
+    elif model == 'XR-Transformer':
+        from pecos.xmc.xtransformer.model import XTransformer
+        model = XTransformer.load(path+'XR-Transformer')
     
     with open(path+'tfidfs.pkl', 'rb') as file:
         tfidfX, tfidfY = pickle.load(file)
@@ -154,19 +167,13 @@ def grid_checkbox(values, nrow=None, ncol=None, title=None, defaults=None):
     return checkboxes
 
 
-def postprocessing(contractions, tfidfX):
-    # Visuel
-    st.write("# Labélisation de question")
-    title_input = st.text_input("Titre : ", value='Programming')
-    question_input = st.text_area("Question : ", value='Python', height=300)
-    
-    # Outils  
+def postprocessing(title_input, question_input, contractions):
     contractions_re = re.compile('(%s)' % '|'.join(contractions.keys()))
     stop_words = set(nltk.corpus.stopwords.words("english"))
     adjective_tag_list = set(['JJ','JJR', 'JJS', 'RBR', 'RBS'])
     token = nltk.tokenize.ToktokTokenizer()
     stemmer = nltk.stem.snowball.EnglishStemmer()
-    # Traitements    
+
     x = ' + '.join([title_input, title_input, question_input])
     x = encode_decode(x)
     x = BeautifulSoup(x, 'html.parser').get_text()
@@ -177,18 +184,33 @@ def postprocessing(contractions, tfidfX):
     x = remove_stopwords(x, token, stop_words)
     x = remove_by_tag(x, token, adjective_tag_list)
     x = stem_text(x, token, stemmer)
-
-    # Tranformation / Prediction
-    X = tfidfX.transform(np.array([x]))
-    return X
+    return x
     
     
 def model():
-    model, tfidfX, tfidfY, contractions = load_model() 
-    X = postprocessing(contractions, tfidfX)
-    y = model.predict(X.astype(np.float32))
-    threshold = st.slider('Seuil :', 0.025, 0.25, 0.25)
-    output = tfidfY.inverse_transform(y > threshold)[0]
+    # Visuel
+    st.write("# Labélisation de question")
+    title_input = st.text_input("Titre : ", value='Programming')
+    question_input = st.text_area("Question : ", value='Python', height=300)
+    model_name = st.select_slider('Modèle :', options=['Simple', 'XR-Linear', 'XR-Transformer'], value='Simple')
+    
+    model, tfidfX, tfidfY, contractions = load_model(model_name) 
+    x = postprocessing(title_input, question_input, contractions)
+    X = tfidfX.transform(np.array([x]))
+    
+    if model_name == 'Simple':
+        y = model.predict(X)
+        output = tfidfY.inverse_transform(y)[0]
+        
+    elif model_name == 'XR-Linear':
+        y = model.predict(X.astype(np.float32))
+        threshold = st.slider('Seuil :', 0.01, 0.99, 0.25)
+        output = tfidfY.inverse_transform(y > threshold)[0]
+        
+    elif model_name == 'XR-Transformer':
+        y = model.predict(x, X.astype(np.float32))
+        threshold = st.slider('Seuil :', 0.01, 0.99, 0.25)
+        output = tfidfY.inverse_transform(y > threshold)[0]
 
     # Visuel
     st.multiselect("Tags : ", tfidfY.get_feature_names(), output)
