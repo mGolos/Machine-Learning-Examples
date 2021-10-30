@@ -8,7 +8,7 @@ import re
 from bs4 import BeautifulSoup
 from numpy import ceil, array
 from sklearn.base import RegressorMixin
-from pandas import read_csv
+from pandas import read_csv, DataFrame
 import matplotlib.pyplot as plt
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger')
@@ -39,6 +39,10 @@ Is there any way to catch in the error callback function all the exceptions thro
 without them stopping the execution of the code?
 Any help would be much appreciated.
 P.S. Happy new year!!'''
+MODEL_WEIGHTS = DataFrame.from_dict(
+    {'Simple': 120, 'BR/GNB': 288, 'LP/SVC': 1500, 'CC/DTC': 2, 'XR-Lin.': 7, 'XR-Tran.': 6}, 
+    orient='index', 
+    columns=['Weight'])
 
 
 class SimpleModel(RegressorMixin):
@@ -274,11 +278,12 @@ def results():
         """)
     st.table((df.loc[models, jeu, :].droplevel(1).loc[:, metrics].sort_index() *100).astype(int).style.background_gradient())
     st.pyplot(df.loc[(models, jeu),  metrics].droplevel(level=1, axis=0).plot.bar().figure)
+    st.pyplot(MODEL_WEIGHTS.plot.bar().figure)
     
     with st.container():
         col1, col2 = st.columns([1,5])
         desired_model = col1.selectbox('Modèle :', all_models, index=3)
-        col2.table(df.loc[desired_model].loc[:, metrics].style.background_gradient(axis=1))
+        col2.table(df.loc[desired_model].loc[:, all_metrics].style.background_gradient(axis=1))
     
 
 def main():
