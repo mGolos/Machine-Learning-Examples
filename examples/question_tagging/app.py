@@ -13,6 +13,32 @@ import matplotlib.pyplot as plt
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger')
 path = "examples/question_tagging/"
+TITLE_BASE = 'How to catch every exception thrown in a webmethod but without those exceptions interrupting the execution of the program'
+QUESTION_BASE = '''Is there any way I can make that every exception thrown
+inside a webmethod go straight to the jQuery Ajax error callback function?
+    $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: "MantenimientoNotasCapacidades.aspx/SaveViaWebService",
+        data: JSON.stringify(params),
+        dataType: "json",
+        async: true,
+        success: function (data) {},
+        error: function (request, status, error) {
+            var response = JSON.parse(request.responseText).d;
+            var error = JSON.parse(response);
+            alert(JSON.parse(request.responseText).error.message);
+        }});
+I know that using JSON.parse(request.responseText).Message should be enough to show the information for
+that error but all I've got now is that every time an exception is raised the code stops right there , 
+being necessary to keep pressing F10 or F5 to finally be able to see the alert.
+I already tried enclosing my code in a 'try' block but I don't see much point in doing that since I can't 
+do much in the 'catch' block as I'd do in a visual basic application where I could use the 'catch' block 
+to show the exception message in a MsgBox.
+Is there any way to catch in the error callback function all the exceptions thrown in a webmethod but 
+without them stopping the execution of the code?
+Any help would be much appreciated.
+P.S. Happy new year!!'''
 
 
 class SimpleModel(RegressorMixin):
@@ -190,14 +216,14 @@ def postprocessing(title_input, question_input, contractions):
 def model():
     # Visuel
     st.write("# Labélisation de question")
-    title_input = st.text_input("Titre : ", value='Programming')
-    question_input = st.text_area("Question : ", value='Python', height=300)
+    title_input = st.text_input("Titre : ", value=TITLE_BASE)
+    question_input = st.text_area("Question : ", value=QUESTION_BASE, height=300)
     model_name = st.select_slider('Modèle :', options=['Simple', 'XR-Linear', 'XR-Transformer'], value='Simple')
     
     model, tfidfX, tfidfY, contractions = load_model(model_name) 
     x = postprocessing(title_input, question_input, contractions)
     X = tfidfX.transform(np.array([x]))
-    
+
     if model_name == 'Simple':
         y = model.predict(X)
         output = tfidfY.inverse_transform(y)[0]
