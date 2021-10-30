@@ -208,7 +208,7 @@ def model():
         output = tfidfY.inverse_transform(y > threshold)[0]
         
     elif model_name == 'XR-Transformer':
-        y = model.predict(x, X.astype(np.float32))
+        y = model.predict([x], X.astype(np.float32))
         threshold = st.slider('Seuil :', 0.01, 0.99, 0.25)
         output = tfidfY.inverse_transform(y > threshold)[0]
 
