@@ -234,13 +234,11 @@ def model():
         
     elif model_name == 'XR-Linear':
         y = model.predict(X.astype(np.float32))
-        threshold = st.slider('Seuil :', 0.01, 0.99, 0.25)
-        output = tfidfY.inverse_transform(y > threshold)[0]
+        output = tfidfY.inverse_transform(y > 0.05)[0]
         
     elif model_name == 'XR-Transformer':
         y = model.predict([x], X.astype(np.float32))
-        threshold = st.slider('Seuil :', 0.01, 0.99, 0.25)
-        output = tfidfY.inverse_transform(y > threshold)[0]
+        output = tfidfY.inverse_transform(y > 0.05)[0]
 
     # Visuel
     st.multiselect("Tags : ", tfidfY.get_feature_names(), output)

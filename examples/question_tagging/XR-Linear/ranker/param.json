@@ -3,8 +3,8 @@
   "class_fullname": "pecos.xmc.base###HierarchicalMLModel"
  },
  "model": "HierarchicalMLModel",
- "depth": 1,
+ "depth": 2,
  "nr_features": 8556,
- "nr_codes": 1,
+ "nr_codes": 16,
  "nr_labels": 1395
 }
