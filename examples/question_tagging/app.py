@@ -270,9 +270,9 @@ def results():
     with st.expander("Explications"):
         st.write("""
             Les différents modèles sont créés et nommés par les abréviations suivantes :  
-            `WE`(Word Embedding), `BR` (Binary Relevance), `CC` (Classifier Chain), `LP` (Label Powerset), `MOC` (Multi Output Classification),
-            `GNB` (Gaussian Naive Bayes), `SVC` (Support Vector Classification), `KNC` (K Neighbours Classifier), `MLkNN` (MultiLabel k Nearest Neighbours).
-            `Simple` étant un modèle simple personnement créé.
+            `BR` (Binary Relevance), `GNB` (Gaussian Naive Bayes), `CC` (Classifier Chain), `DTC` (Decision Tree Classifier),
+            `LP` (Label Powerset), `SVC` (Support Vector Classification).
+            `Simple` étant un modèle simple personnellement créé.
         """)
     st.table((df.loc[models, jeu, :].droplevel(1).loc[:, metrics].sort_index() *100).astype(int).style.background_gradient())
     st.pyplot(df.loc[(models, jeu),  metrics].droplevel(level=1, axis=0).plot.bar().figure)
