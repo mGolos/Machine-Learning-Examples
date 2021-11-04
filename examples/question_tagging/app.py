@@ -271,8 +271,8 @@ def results():
         st.write("""
             Les différents modèles sont créés et nommés par les abréviations suivantes :  
             `BR` (Binary Relevance), `GNB` (Gaussian Naive Bayes), `CC` (Classifier Chain), `DTC` (Decision Tree Classifier),
-            `LP` (Label Powerset), `SVC` (Support Vector Classification).
-            `Simple` étant un modèle simple personnellement créé.
+            `LP` (Label Powerset), `SVC` (Support Vector Classification), `Simple` (modèle simple personnellement créé),
+            `XR-Lin.` et `XR-Tra.` (Modèles Linéaire et Transformer de la biblioteque [PECOS](https://github.com/amzn/pecos))
         """)
     st.table((df.loc[models, jeu, :].droplevel(1).loc[:, metrics].sort_index() *100).astype(int).style.background_gradient())
     st.pyplot(df.loc[(models, jeu),  metrics].droplevel(level=1, axis=0).plot.bar().figure)
