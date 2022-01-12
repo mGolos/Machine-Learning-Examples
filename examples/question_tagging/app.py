@@ -141,7 +141,7 @@ def stem_text(text, token, stemmer):
     return " ".join(stem_text) # Return the text untokenize
 
 
-@st.experimental_memo
+@st.cache(allow_output_mutation=True)
 def load_model(model):
     if model == 'Simple':
         with open(path+'model_simple.pkl', 'rb') as file:
