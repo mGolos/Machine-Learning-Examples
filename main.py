@@ -22,4 +22,6 @@ if __name__ == "__main__":
     st.sidebar.image('hands.png')
     with open('.streamlit/style.css') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+        
     main()
+    st.sidebar.markdown("[Portefolio](https://share.streamlit.io/mgolos/portfolio/main/main.py)")
