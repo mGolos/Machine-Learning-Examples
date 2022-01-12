@@ -12,6 +12,7 @@ from PIL import Image
 path = "examples/breed_classifier/"
 
 
+@st.experimental_memo
 def load_from_url(address):
     resp = urllib.request.urlopen(address)
     img = np.array(bytearray(resp.read()), dtype="uint8")
@@ -20,6 +21,7 @@ def load_from_url(address):
     return img
 
 
+@st.experimental_memo
 def load_image(image_file):
     img = Image.open(image_file)
     img = np.array(img)
@@ -72,9 +74,6 @@ def model():
     if rate > 0.4:
         with st.expander(f"Exemples de {race}..."):
             components.iframe(f'https://www.picsearch.com/index.cgi?q=dog+breed+{race.replace(" ","+").lower()}', height=900, scrolling=True)
-            
-    with st.expander("Races possibles..."):
-        st.multiselect("", label_encoder.classes_, label_encoder.classes_)
 
 
 def results():

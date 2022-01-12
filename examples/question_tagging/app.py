@@ -12,6 +12,8 @@ from pandas import read_csv, DataFrame
 import matplotlib.pyplot as plt
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger')
+
+
 path = "examples/question_tagging/"
 TITLE_BASE = 'How to catch every exception thrown in a webmethod but without those exceptions interrupting the execution of the program'
 QUESTION_BASE = '''Is there any way I can make that every exception thrown
@@ -68,12 +70,10 @@ class SimpleModel(RegressorMixin):
             return normalized > self.threshold
 
 
-@st.cache
 def encode_decode(x):
     return str(x).encode("utf-8", errors='surrogatepass').decode("ISO-8859-1", errors='surrogatepass')
 
 
-@st.cache
 def clean_text(text):
     text = re.sub(r"\'", "'", text) # match all literal apostrophe pattern then replace them by a single whitespace
     text = re.sub(r"\n", " ", text) # match all literal Line Feed (New line) pattern then replace them by a single whitespace
@@ -83,7 +83,6 @@ def clean_text(text):
     return text
 
 
-@st.cache
 def expand_contractions(s, contractions_dict, contractions_re):
     def replace(match):
         return contractions_dict[match.group(0)]
@@ -91,7 +90,6 @@ def expand_contractions(s, contractions_dict, contractions_re):
     return contractions_re.sub(replace, s)
 
 
-@st.cache
 def remove_single_letter(text):
     """remove single alphabetical character"""    
 
@@ -115,7 +113,6 @@ def remove_single_letter(text):
     return text
 
 
-@st.cache
 def remove_stopwords(text, token, stop_words):
     """remove common words in english by using nltk.corpus's list"""
     words = token.tokenize(text)
@@ -124,7 +121,6 @@ def remove_stopwords(text, token, stop_words):
     return ' '.join(map(str, filtered)) # Return the text untokenize
 
 
-@st.cache
 def remove_by_tag(text, token, undesired_tag):
     """remove all words by using ntk tag (adjectives, verbs, etc.)"""
     words = token.tokenize(text)
@@ -136,7 +132,6 @@ def remove_by_tag(text, token, undesired_tag):
     return ' '.join(map(str, filtered)) # Return the text untokenize
 
 
-@st.cache
 def stem_text(text, token, stemmer):
     """Stem the text"""
     words = token.tokenize(text.replace('-',''))  # Suppression de - pour les mots combinés "c-language"
@@ -146,7 +141,7 @@ def stem_text(text, token, stemmer):
     return " ".join(stem_text) # Return the text untokenize
 
 
-@st.cache(allow_output_mutation=True)
+@st.experimental_memo
 def load_model(model):
     if model == 'Simple':
         with open(path+'model_simple.pkl', 'rb') as file:
@@ -167,7 +162,7 @@ def load_model(model):
         
     return model, tfidfX, tfidfY, contractions
 
-    
+  
 def grid_checkbox(values, nrow=None, ncol=None, title=None, defaults=None):
     N = len(values)
     
@@ -197,6 +192,7 @@ def grid_checkbox(values, nrow=None, ncol=None, title=None, defaults=None):
     return checkboxes
 
 
+@st.experimental_memo
 def postprocessing(title_input, question_input, contractions):
     contractions_re = re.compile('(%s)' % '|'.join(contractions.keys()))
     stop_words = set(nltk.corpus.stopwords.words("english"))
